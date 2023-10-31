@@ -25,6 +25,7 @@ PlasmaCore.Dialog {
     property bool resizing: false
     property var clientArea: {}
     property var cachedClientArea: {}
+    property var cachedClientGeometry: {}
     property var displaySize: {}
     property int currentLayout: 0
     property var screenLayouts: {0: 0}
@@ -183,7 +184,10 @@ PlasmaCore.Dialog {
             let client = workspace.clientList()[i]
             if (client.zone === zone &&
                 client.layout === layout &&
-                client.desktop === workspace.currentDesktop &&
+                ((client.desktop === workspace.currentDesktop) || client.onAllDesktops) &&
+                // TODO: ideally replace the above desktop check with client.isOnCurrentDesktop()
+                // (https://github.com/KDE/kwin/blob/master/src/window.h)
+                // but it doesn't work atm on Plasma 5.27 on x11
                 client.activity === workspace.currentActivity &&
                 client.screen === workspace.activeClient.screen &&
                 client.normalWindow) {
@@ -253,7 +257,6 @@ PlasmaCore.Dialog {
         // save zone
         client.zone = zone
         client.layout = getLayoutInActiveClientScreen()
-        client.desktop = workspace.currentDesktop
         client.activity = workspace.currentActivity
     }
 
@@ -657,12 +660,12 @@ PlasmaCore.Dialog {
             function onClientStartUserMovedResized(client) {
                 if (client.resizeable && client.normalWindow) {
                     if (client.move && checkFilter(client)) {
-                        
                         cachedClientArea = clientArea
+                        cachedClientGeometry = {x: client.geometry.x,
+                                                y: client.geometry.y}
                         moving = true
                         moved = false
                         resizing = false
-                        log("Move start " + client.resourceClass.toString())
                         mainDialog.show()
                     }
                     if (client.resize) {
@@ -676,9 +679,13 @@ PlasmaCore.Dialog {
 
             // is moving
             function onClientStepUserMovedResized(client, r) {
-                
                 if (client.resizeable) {
                     if (moving && checkFilter(client)) {
+                        // Double check that client window is moved
+                        if (Math.abs(cachedClientGeometry.x - client.geometry.x) < 2 ||
+                            Math.abs(cachedClientGeometry.y - client.geometry.y) < 2) {
+                            return
+                        }
                         moved = true
                         if (config.rememberWindowGeometries && client.zone != -1) {
                             if (client.oldGeometry) {

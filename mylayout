@@ -1,0 +1,68 @@
+[
+    {
+        "name": "Priority 1",
+        "padding": 0,
+        "zones": [
+            {
+                "x": 5,
+                "y": 25,
+                "height": 75,
+                "width": 25
+            },
+            {
+                "x": 30,
+                "y": 25,
+                "height": 75,
+                "width": 40
+            },
+            {
+                "x": 70,
+                "y": 25,
+                "height": 75,
+                "width": 25
+            }
+        ]
+    },
+    {
+        "name": "Priority 2 Right",
+        "padding": 0,
+        "zones": [
+            {
+                "x": 15,
+                "y": 25,
+                "height": 75,
+                "width": 30
+            },
+            {
+                "x": 15,
+                "y": 25,
+                "height": 75,
+                "width": 40
+            },
+            {
+                "x": 45,
+                "y": 25,
+                "height": 75,
+                "width": 40
+            },
+            {
+                "x": 55,
+                "y": 25,
+                "height": 75,
+                "width": 30
+            }
+        ]
+    },
+    {
+        "name": "Video",
+        "padding": 0,
+        "zones": [
+            {
+                "x": 20,
+                "y": 15,
+                "height": 85,
+                "width": 60
+            }
+        ]
+    }
+]
